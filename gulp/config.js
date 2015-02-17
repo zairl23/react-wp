@@ -2,10 +2,6 @@ var src 	= "./src";
 var dest 	= "./dist";
 
 module.exports = {
-	markup: {
-    	src: src + "/htdocs/**",
-    	dest: dest
-  	},
 	less: {
 	    src: src + "/styles/**/*.less",
 	    dest: dest + '/styles',
@@ -14,9 +10,10 @@ module.exports = {
 	    }
   	},
 	browserSync: {
-    	server: {
-      		// Serve up our build folder
-      		baseDir: './dist'
+    	proxy: 'reactwp.dev',
+    	snippetOptions: {
+      		whitelist: ['/wp-admin/admin-ajax.php'],
+      		blacklist: ['/wp-admin/**']
     	}
   	},
 	browserify: {

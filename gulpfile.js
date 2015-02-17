@@ -5,5 +5,5 @@ var requireDir  = require('require-dir');
 requireDir('./gulp/tasks', { recurse: true });
 
 // Expose runnable and default tasks here
-gulp.task('build', ['browserify', 'less', 'markup']);
+gulp.task('build', ['browserify', 'less']);
 
