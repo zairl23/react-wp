@@ -1,0 +1,41 @@
+var src 	= "./src";
+var dest 	= "./dist";
+
+module.exports = {
+	markup: {
+    	src: src + "/htdocs/**",
+    	dest: dest
+  	},
+	less: {
+	    src: src + "/styles/**/*.less",
+	    dest: dest + '/styles',
+	    settings: {
+	    	paths: []
+	    }
+  	},
+	browserSync: {
+    	server: {
+      		// Serve up our build folder
+      		baseDir: './dist'
+    	}
+  	},
+	browserify: {
+	    // A separate bundle will be generated for each
+	    // bundle config in the list below
+	    bundleConfigs: [{
+	      entries: src + '/scripts/libs.js',
+	      dest: dest + '/js',
+	      outputName: 'libs.js',
+	      // list of modules to make require-able externally
+	      require: ['underscore', 'react', 'react/addons', 'reflux', 'react-router'],
+	      loadMaps: false
+	    }, {
+	      entries: src + '/scripts/main.jsx',
+	      dest: dest + '/js',
+	      outputName: 'main.js',
+	      // list of externally available modules to exclude from the bundle
+	      external: ['underscore', 'react', 'react/addons', 'reflux', 'react-router'],
+	      loadMaps: true
+	    }]
+  }
+};
