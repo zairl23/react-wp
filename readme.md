@@ -1,8 +1,10 @@
-# Starting point for developing React + Reflux + Backbone apps
+# Attempt at a ReactJS based them for Wordpress
 
 ## Implementation
 
-TODO
+* ReactJS
+* Reflux
+* Backbone
 
 ## Running
 
