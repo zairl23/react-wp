@@ -9,11 +9,20 @@ function asset_path($filename) {
 }
 
 function load_scripts() {
+	if ( ! function_exists( 'json_get_url_prefix' ) ) {
+		return;
+	}
+
 	wp_enqueue_style('reactwp_css', asset_path('styles/main.css'), false, null);
 
   	wp_enqueue_script('jquery');
   	wp_enqueue_script('reactwp_lib_js', asset_path('scripts/libs.js'), [], null, true);
+
   	wp_enqueue_script('reactwp_js', asset_path('scripts/main.js'), [], null, true);
+
+  	$settings = array( 'root' => home_url( json_get_url_prefix() ), 'nonce' => wp_create_nonce( 'wp_json' ) );
+  	wp_localize_script( 'reactwp_js', 'WP_API_Settings', $settings );
+  	
 }
 
 add_action('wp_enqueue_scripts', 'load_scripts', 100);
