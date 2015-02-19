@@ -21,14 +21,14 @@ module.exports = {
 	    // bundle config in the list below
 	    bundleConfigs: [{
 	      entries: src + '/scripts/libs.js',
-	      dest: dest + '/js',
+	      dest: dest + '/scripts',
 	      outputName: 'libs.js',
 	      // list of modules to make require-able externally
 	      require: ['underscore', 'react', 'react/addons', 'reflux', 'react-router'],
 	      loadMaps: false
 	    }, {
 	      entries: src + '/scripts/main.jsx',
-	      dest: dest + '/js',
+	      dest: dest + '/scripts',
 	      outputName: 'main.js',
 	      // list of externally available modules to exclude from the bundle
 	      external: ['underscore', 'react', 'react/addons', 'reflux', 'react-router'],
