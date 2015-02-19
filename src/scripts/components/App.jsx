@@ -1,19 +1,21 @@
 'use strict';
+var React                  = require('react');
+var $                      = require('jquery');
+var Backbone               = require('backbone');
+Backbone.$                 = $;
+var BackboneReactComponent = require('backbone-react-component');
 
-var React = require('react');
-var Reflux = require('reflux');
-var ReactRouter = require('react-router');
-var RouteHandler = ReactRouter.RouteHandler;
-
-var Store = require('../stores/store.js');
+var Posts                  = require('../collections/WpApiCollections').Posts;
+var PostList               = require('./PostList.jsx');
 
 // Renders the full application
 var App = React.createClass({
     // this will cause setState({list:updatedlist}) whenever the store does trigger(updatedlist)
-    mixins: [],			 // [Reflux.connect(Store,"")],
-
+    mixins: [BackboneReactComponent],			 // [Reflux.connect(Store,"")],
     render: function() {
-        return;
+        return (
+            <PostList />
+        );
     }
 });
 

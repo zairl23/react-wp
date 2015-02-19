@@ -1,14 +1,7 @@
+'use strict';
 var React = require('react');
-var Reflux = require('reflux');
-var ReactRouter = require('react-router');
-var App = require('./components/App.jsx');
+var App   = require('./components/App.jsx');
 
-var routes = (
-        <ReactRouter.Route handler={App}>
-        </ReactRouter.Route>
-);
+var Posts = require('./collections/WpApiCollections').Posts;
 
-
-ReactRouter.run(routes, function (Handler) {
-      React.render(<Handler/>, document.getElementById('app'));
-});
+React.render(<App collection={new Posts()} />, document.body);
