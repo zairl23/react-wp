@@ -1,4 +1,4 @@
-dist/js/*
+dist/scripts/*
 dist/styles/*
 node_modules
 npm-debug.log
