@@ -1,8 +1,11 @@
+/*jslint node: true */
 'use strict';
 
 var Backbone = require('backbone');
 var _ 		 = require('underscore');
+var WPModels   = require('../models/WpApiModels');
 
+/* global WP_API_Settings:false */
 var BaseCollection = Backbone.Collection.extend(
 	/** @lends BaseCollection.prototype  */
 	{
@@ -126,214 +129,219 @@ var BaseCollection = Backbone.Collection.extend(
 	}
 );
 
-var WpApiCollections = {
+/**
+ * Backbone collection for posts
+ */
+var Posts = BaseCollection.extend(
+	/** @lends Posts.prototype */
+	{
+		url: WP_API_Settings.root + '/posts',
 
-	/**
-	 * Backbone collection for posts
-	 */
-	this.Posts = BaseCollection.extend(
-		/** @lends Posts.prototype */
-		{
-			url: WP_API_Settings.root + '/posts',
+		model: WPModels.Post
+	}
+);
+module.exports.Posts = Posts;
 
-			model: wp.api.models.Post
-		}
-	);
+/**
+ * Backbone collection for pages
+ */
+var Pages = BaseCollection.extend(
+	/** @lends Pages.prototype */
+	{
+		url: WP_API_Settings.root + '/pages',
 
-	/**
-	 * Backbone collection for pages
-	 */
-	this.Pages = BaseCollection.extend(
-		/** @lends Pages.prototype */
-		{
-			url: WP_API_Settings.root + '/pages',
+		model: WPModels.Page
+	}
+);
+module.exports.Pages = Pages;
 
-			model: wp.api.models.Page
-		}
-	);
+/**
+ * Backbone users collection
+ */
+var Users = BaseCollection.extend(
+	/** @lends Users.prototype */
+	{
+		url: WP_API_Settings.root + '/users',
 
-	/**
-	 * Backbone users collection
-	 */
-	this.Users = BaseCollection.extend(
-		/** @lends Users.prototype */
-		{
-			url: WP_API_Settings.root + '/users',
+		model: WPModels.User
+	}
+);
+module.exports.Users = Users;
 
-			model: wp.api.models.User
-		}
-	);
+/**
+ * Backbone post statuses collection
+ */
+var PostStatuses = BaseCollection.extend(
+	/** @lends PostStatuses.prototype */
+	{
+		url: WP_API_Settings.root + '/posts/statuses',
 
-	/**
-	 * Backbone post statuses collection
-	 */
-	this.PostStatuses = BaseCollection.extend(
-		/** @lends PostStatuses.prototype */
-		{
-			url: WP_API_Settings.root + '/posts/statuses',
+		model: WPModels.PostStatus
 
-			model: wp.api.models.PostStatus
+	}
+);
+module.exports.PostStatuses = PostStatuses;
 
-		}
-	);
+/**
+ * Backbone media library collection
+ */
+var MediaLibrary = BaseCollection.extend(
+	/** @lends MediaLibrary.prototype */
+	{
+		url: WP_API_Settings.root + '/media',
 
-	/**
-	 * Backbone media library collection
-	 */
-	this.MediaLibrary = BaseCollection.extend(
-		/** @lends MediaLibrary.prototype */
-		{
-			url: WP_API_Settings.root + '/media',
+		model: WPModels.Media
+	}
+);
+module.exports.MediaLibrary = MediaLibrary;
 
-			model: wp.api.models.Media
-		}
-	);
+/**
+ * Backbone taxonomy collection
+ */
+var Taxonomies = BaseCollection.extend(
+	/** @lends Taxonomies.prototype */
+	{
+		model: WPModels.Taxonomy,
 
-	/**
-	 * Backbone taxonomy collection
-	 */
-	this.Taxonomies = BaseCollection.extend(
-		/** @lends Taxonomies.prototype */
-		{
-			model: wp.api.models.Taxonomy,
+		url: WP_API_Settings.root + '/taxonomies'
+	}
+);
+module.exports.Taxonomies = Taxonomies;
 
-			url: WP_API_Settings.root + '/taxonomies'
-		}
-	);
+/**
+ * Backbone comment collection
+ */
+var Comments = BaseCollection.extend(
+	/** @lends Comments.prototype */
+	{
+		model: WPModels.Comment,
 
-	/**
-	 * Backbone comment collection
-	 */
-	this.Comments = BaseCollection.extend(
-		/** @lends Comments.prototype */
-		{
-			model: wp.api.models.Comment,
+		post: null,
 
-			post: null,
+		/**
+		 * @class Represent an array of comments
+		 * @augments Backbone.Collection
+		 * @constructs
+		 */
+		initialize: function( models, options ) {
+			this.constructor.__super__.initialize.apply( this, arguments );
 
-			/**
-			 * @class Represent an array of comments
-			 * @augments Backbone.Collection
-			 * @constructs
-			 */
-			initialize: function( models, options ) {
-				this.constructor.__super__.initialize.apply( this, arguments );
-
-				if ( options && options.post ) {
-					this.post = options.post;
-				}
-			},
-
-			/**
-			 * Return URL for collection
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				return WP_API_Settings.root + '/posts/' + this.post + '/comments';
+			if ( options && options.post ) {
+				this.post = options.post;
 			}
+		},
+
+		/**
+		 * Return URL for collection
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			return WP_API_Settings.root + '/posts/' + this.post + '/comments';
 		}
-	);
+	}
+);
+module.exports.Comments = Comments;
 
-	/**
-	 * Backbone post type collection
-	 */
-	this.PostTypes = BaseCollection.extend(
-		/** @lends PostTypes.prototype */
-		{
-			model: wp.api.models.PostType,
+/**
+ * Backbone post type collection
+ */
+var PostTypes = BaseCollection.extend(
+	/** @lends PostTypes.prototype */
+	{
+		model: WPModels.PostType,
 
-			url: WP_API_Settings.root + '/posts/types'
-		}
-	);
+		url: WP_API_Settings.root + '/posts/types'
+	}
+);
+module.exports.PostTypes = PostTypes;
 
-	/**
-	 * Backbone terms collection
-	 */
-	this.Terms = BaseCollection.extend(
-		/** @lends Terms.prototype */
-		{
-			model: wp.api.models.Term,
+/**
+ * Backbone terms collection
+ */
+var Terms = BaseCollection.extend(
+	/** @lends Terms.prototype */
+	{
+		model: WPModels.Term,
 
-			type: 'post',
+		type: 'post',
 
-			taxonomy: 'category',
+		taxonomy: 'category',
 
-			/**
-			 * @class Represent an array of terms
-			 * @augments Backbone.Collection
-			 * @constructs
-			 */
-			initialize: function( models, options ) {
-				this.constructor.__super__.initialize.apply( this, arguments );
+		/**
+		 * @class Represent an array of terms
+		 * @augments Backbone.Collection
+		 * @constructs
+		 */
+		initialize: function( models, options ) {
+			this.constructor.__super__.initialize.apply( this, arguments );
 
-				if ( typeof options !== 'undefined' ) {
-					if ( options.type ) {
-						this.type = options.type;
-					}
-
-					if ( options.taxonomy ) {
-						this.taxonomy = options.taxonomy;
-					}
+			if ( typeof options !== 'undefined' ) {
+				if ( options.type ) {
+					this.type = options.type;
 				}
 
-				this.on( 'add', _.bind( this.addModel, this ) );
-			},
-
-			/**
-			 * We need to set the type and taxonomy for each model
-			 *
-			 * @param {Backbone.model} model
-			 */
-			addModel: function( model ) {
-				model.type = this.type;
-				model.taxonomy = this.taxonomy;
-			},
-
-			/**
-			 * Return URL for collection
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				return WP_API_Settings.root + '/posts/types/' + this.type + '/taxonomies/' + this.taxonomy + '/terms/';
-			}
-		}
-	);
-
-	/**
-	 * Backbone revisions collection
-	 */
-	this.Revisions = BaseCollection.extend(
-		/** @lends Revisions.prototype */
-		{
-			model: wp.api.models.Revision,
-
-			parent: null,
-
-			/**
-			 * @class Represent an array of revisions
-			 * @augments Backbone.Collection
-			 * @constructs
-			 */
-			initialize: function( models, options ) {
-				this.constructor.__super__.initialize.apply( this, arguments );
-
-				if ( options && options.parent ) {
-					this.parent = options.parent;
+				if ( options.taxonomy ) {
+					this.taxonomy = options.taxonomy;
 				}
-			},
-
-			/**
-			 * return URL for collection
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				return WP_API_Settings.root + '/posts/' + this.parent + '/revisions';
 			}
-		}
-	);
-}
 
-module.exports = WpApiCollections;
+			this.on( 'add', _.bind( this.addModel, this ) );
+		},
+
+		/**
+		 * We need to set the type and taxonomy for each model
+		 *
+		 * @param {Backbone.model} model
+		 */
+		addModel: function( model ) {
+			model.type = this.type;
+			model.taxonomy = this.taxonomy;
+		},
+
+		/**
+		 * Return URL for collection
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			return WP_API_Settings.root + '/posts/types/' + this.type + '/taxonomies/' + this.taxonomy + '/terms/';
+		}
+	}
+);
+module.exports.Terms = Terms;
+
+/**
+ * Backbone revisions collection
+ */
+var Revisions = BaseCollection.extend(
+	/** @lends Revisions.prototype */
+	{
+		model: WPModels.Revision,
+
+		parent: null,
+
+		/**
+		 * @class Represent an array of revisions
+		 * @augments Backbone.Collection
+		 * @constructs
+		 */
+		initialize: function( models, options ) {
+			this.constructor.__super__.initialize.apply( this, arguments );
+
+			if ( options && options.parent ) {
+				this.parent = options.parent;
+			}
+		},
+
+		/**
+		 * return URL for collection
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			return WP_API_Settings.root + '/posts/' + this.parent + '/revisions';
+		}
+	}
+);
+module.exports.Revisions = Revisions;

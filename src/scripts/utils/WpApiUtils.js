@@ -1,4 +1,5 @@
-//'use strict';
+/*jslint node: true */
+'use strict';
 
 var Backbone = require('backbone');
 var _		 = require('underscore');
@@ -26,12 +27,10 @@ if ( ! Date.prototype.toISOString ) {
 	};
 }
 
-var WpApiUtils = function() {
-	var origParse = Date.parse,
-		numericKeys = [ 1, 4, 5, 6, 7, 10, 11 ];
-
-
-	this.parseISO8601 = function( date ) {
+var WpApiUtils = {
+	origParse: Date.parse,
+	numericKeys: [ 1, 4, 5, 6, 7, 10, 11 ],
+	parseISO8601: function( date ) {
 		var timestamp, struct, i, k,
 			minutesOffset = 0;
 
@@ -41,7 +40,7 @@ var WpApiUtils = function() {
 		//              1 YYYY                2 MM       3 DD           4 HH    5 mm       6 ss        7 msec        8 Z 9 ±    10 tzHH    11 tzmm
 		if ((struct = /^(\d{4}|[+\-]\d{6})(?:-(\d{2})(?:-(\d{2}))?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?(?:(Z)|([+\-])(\d{2})(?::(\d{2}))?)?)?$/.exec(date))) {
 			// avoid NaN timestamps caused by “undefined” values being passed to Date.UTC
-			for ( i = 0; ( k = numericKeys[i] ); ++i) {
+			for ( i = 0; ( k = this.numericKeys[i] ); ++i) {
 				struct[k] = +struct[k] || 0;
 			}
 
@@ -60,11 +59,11 @@ var WpApiUtils = function() {
 			timestamp = Date.UTC( struct[1], struct[2], struct[3], struct[4], struct[5] + minutesOffset, struct[6], struct[7] );
 		}
 		else {
-			timestamp = origParse ? origParse( date ) : NaN;
+			timestamp = this.origParse ? this.origParse( date ) : NaN;
 		}
 
 		return timestamp;
-	};
+	}
 };
 
 module.exports = WpApiUtils;

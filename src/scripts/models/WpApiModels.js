@@ -1,7 +1,9 @@
+/*jslint node: true */
 'use strict';
 
 var Backbone = require('backbone');
 var _		 = require('underscore');
+var WPUtils  = require('../utils/WpApiUtils.js');
 
 /**
  * Array of parseable dates
@@ -47,7 +49,7 @@ var TimeStampedMixin = {
 				return;
 			}
 
-			var timestamp = wp.api.utils.parseISO8601( response[key] );
+			var timestamp = WPUtils.parseISO8601( response[key] );
 			response[key] = new Date( timestamp );
 		});
 
@@ -109,6 +111,7 @@ var HierarchicalMixin = {
 /**
  * Private Backbone base model for all models
  */
+ /* global WP_API_Settings:false */
 var BaseModel = Backbone.Model.extend(
 	/** @lends BaseModel.prototype  */
 	{
@@ -140,424 +143,428 @@ var BaseModel = Backbone.Model.extend(
 	}
 );
 
-var WpApiModels = function() {
+/**
+ * Backbone model for single users
+ */
+var User = BaseModel.extend(
+	/** @lends User.prototype  */
+	{
+		idAttribute: 'ID',
 
-	/**
-	 * Backbone model for single users
-	 */
-	this.User = BaseModel.extend(
-		/** @lends User.prototype  */
-		{
-			idAttribute: 'ID',
+		urlRoot: WP_API_Settings.root + '/users',
 
-			urlRoot: WP_API_Settings.root + '/users',
+		defaults: {
+			ID: null,
+			username: '',
+			email: '',
+			password: '',
+			name: '',
+			first_name: '',
+			last_name: '',
+			nickname: '',
+			slug: '',
+			URL: '',
+			avatar: '',
+			meta: {
+				links: {}
+			}
+		},
 
-			defaults: {
-				ID: null,
-				username: '',
-				email: '',
-				password: '',
-				name: '',
-				first_name: '',
-				last_name: '',
-				nickname: '',
-				slug: '',
-				URL: '',
-				avatar: '',
-				meta: {
-					links: {}
-				}
-			},
+		/**
+		 * Return avatar URL
+		 *
+		 * @param {number} size
+		 * @returns {string}
+		 */
+		avatar: function( size ) {
+			return this.get( 'avatar' ) + '&s=' + size;
+		}
+	}
+);
+module.exports.User = User;
 
-			/**
-			 * Return avatar URL
-			 *
-			 * @param {number} size
-			 * @returns {string}
-			 */
-			avatar: function( size ) {
-				return this.get( 'avatar' ) + '&s=' + size;
+/**
+ * Model for Taxonomy
+ */
+var Taxonomy = BaseModel.extend(
+	/** @lends Taxonomy.prototype  */
+	{
+		idAttribute: 'slug',
+
+		urlRoot: WP_API_Settings.root + '/taxonomies',
+
+		defaults: {
+			name: '',
+			slug: null,
+			labels: {},
+			types: {},
+			show_cloud: false,
+			hierarchical: false,
+			meta: {
+				links: {}
 			}
 		}
-	);
+	}
+);
+module.exports.Taxonomy = Taxonomy;
 
-	/**
-	 * Model for Taxonomy
-	 */
-	this.Taxonomy = BaseModel.extend(
-		/** @lends Taxonomy.prototype  */
-		{
-			idAttribute: 'slug',
+/**
+ * Backbone model for term
+ */
+var Term = BaseModel.extend( _.extend(
+	/** @lends Term.prototype */
+	{
+		idAttribute: 'ID',
 
-			urlRoot: WP_API_Settings.root + '/taxonomies',
+		taxonomy: 'category',
 
-			defaults: {
-				name: '',
-				slug: null,
-				labels: {},
-				types: {},
-				show_cloud: false,
-				hierarchical: false,
-				meta: {
-					links: {}
+		/**
+		 * @class Represent a term
+		 * @augments Backbone.Model
+		 * @constructs
+		 */
+		initialize: function( attributes, options ) {
+			if ( typeof options !== 'undefined' ) {
+				if ( options.taxonomy ) {
+					this.taxonomy = options.taxonomy;
 				}
+			}
+		},
+
+		/**
+		 * Return URL for the model
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			var id = this.get( 'ID' );
+			id = id || '';
+
+			return WP_API_Settings.root + '/taxonomies/' + this.taxonomy + '/terms/' + id;
+		},
+
+		defaults: {
+			ID: null,
+			name: '',
+			slug: '',
+			description: '',
+			parent: null,
+			count: 0,
+			link: '',
+			meta: {
+				links: {}
 			}
 		}
-	);
 
-	/**
-	 * Backbone model for term
-	 */
-	this.Term = BaseModel.extend( _.extend(
-		/** @lends Term.prototype */
-		{
-			idAttribute: 'ID',
+	}, TimeStampedMixin, HierarchicalMixin )
+);
+module.exports.Term = Term;
 
-			taxonomy: 'category',
+/**
+ * Backbone model for single posts
+ */
+var Post = BaseModel.extend( _.extend(
+	/** @lends Post.prototype  */
+	{
+		idAttribute: 'ID',
 
-			/**
-			 * @class Represent a term
-			 * @augments Backbone.Model
-			 * @constructs
-			 */
-			initialize: function( attributes, options ) {
-				if ( typeof options !== 'undefined' ) {
-					if ( options.taxonomy ) {
-						this.taxonomy = options.taxonomy;
-					}
-				}
-			},
+		urlRoot: WP_API_Settings.root + '/posts',
 
-			/**
-			 * Return URL for the model
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				var id = this.get( 'ID' );
-				id = id || '';
-
-				return WP_API_Settings.root + '/taxonomies/' + this.taxonomy + '/terms/' + id;
-			},
-
-			defaults: {
-				ID: null,
-				name: '',
-				slug: '',
-				description: '',
-				parent: null,
-				count: 0,
-				link: '',
-				meta: {
-					links: {}
-				}
-			}
-
-		}, TimeStampedMixin, HierarchicalMixin )
-	);
-
-	/**
-	 * Backbone model for single posts
-	 */
-	this.Post = BaseModel.extend( _.extend(
-		/** @lends Post.prototype  */
-		{
-			idAttribute: 'ID',
-
-			urlRoot: WP_API_Settings.root + '/posts',
-
-			defaults: {
-				ID: null,
-				title: '',
-				status: 'draft',
-				type: 'post',
-				author: new User(),
-				content: '',
-				link: '',
-				'parent': 0,
-				date: new Date(),
-				date_gmt: new Date(),
-				modified: new Date(),
-				modified_gmt: new Date(),
-				format: 'standard',
-				slug: '',
-				guid: '',
-				excerpt: '',
-				menu_order: 0,
-				comment_status: 'open',
-				ping_status: 'open',
-				sticky: false,
-				date_tz: 'Etc/UTC',
-				modified_tz: 'Etc/UTC',
-				featured_image: null,
-				terms: {},
-				post_meta: {},
-				meta: {
-					links: {}
-				}
-			}
-		}, TimeStampedMixin, HierarchicalMixin )
-	);
-
-	/**
-	 * Backbone model for pages
-	 */
-	this.Page = BaseModel.extend( _.extend(
-		/** @lends Page.prototype  */
-		{
-			idAttribute: 'ID',
-
-			urlRoot: WP_API_Settings.root + '/pages',
-
-			defaults: {
-				ID: null,
-				title: '',
-				status: 'draft',
-				type: 'page',
-				author: new User(),
-				content: '',
-				parent: 0,
-				link: '',
-				date: new Date(),
-				modified: new Date(),
-				date_gmt: new Date(),
-				modified_gmt: new Date(),
-				date_tz: 'Etc/UTC',
-				modified_tz: 'Etc/UTC',
-				format: 'standard',
-				slug: '',
-				guid: '',
-				excerpt: '',
-				menu_order: 0,
-				comment_status: 'closed',
-				ping_status: 'open',
-				sticky: false,
-				password: '',
-				meta: {
-					links: {}
-				},
-				featured_image: null,
-				terms: []
-			}
-		}, TimeStampedMixin, HierarchicalMixin )
-	);
-
-	/**
-	 * Backbone model for revisions
-	 */
-	Revision = Post.extend(
-		/** @lends Revision.prototype */
-		{
-			/**
-			 * Return URL for model
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				var parent_id = this.get( 'parent' );
-				parent_id = parent_id || '';
-
-				var id = this.get( 'ID' );
-				id = id || '';
-
-				return WP_API_Settings.root + '/posts/' + parent_id + '/revisions/' + id;
-			},
-
-			/**
-			 * @class Represent a revision
-			 * @augments Backbone.Model
-			 * @constructs
-			 */
-			initialize: function() {
-				// Todo: what of the parent model is a page?
-				this.parentModel = Post;
+		defaults: {
+			ID: null,
+			title: '',
+			status: 'draft',
+			type: 'post',
+			author: new User(),
+			content: '',
+			link: '',
+			'parent': 0,
+			date: new Date(),
+			date_gmt: new Date(),
+			modified: new Date(),
+			modified_gmt: new Date(),
+			format: 'standard',
+			slug: '',
+			guid: '',
+			excerpt: '',
+			menu_order: 0,
+			comment_status: 'open',
+			ping_status: 'open',
+			sticky: false,
+			date_tz: 'Etc/UTC',
+			modified_tz: 'Etc/UTC',
+			featured_image: null,
+			terms: {},
+			post_meta: {},
+			meta: {
+				links: {}
 			}
 		}
-	);
+	}, TimeStampedMixin, HierarchicalMixin )
+);
+module.exports.Post = Post;
 
-	/**
-	 * Backbone model for media items
-	 */
-	this.Media = BaseModel.extend( _.extend(
-		/** @lends Media.prototype */
-		{
-			idAttribute: 'ID',
+/**
+ * Backbone model for pages
+ */
+var Page = BaseModel.extend( _.extend(
+	/** @lends Page.prototype  */
+	{
+		idAttribute: 'ID',
 
-			urlRoot: WP_API_Settings.root + '/media',
+		urlRoot: WP_API_Settings.root + '/pages',
 
-			defaults: {
-				ID: null,
-				title: '',
-				status: 'inherit',
-				type: 'attachment',
-				author: new User(),
-				content: '',
-				parent: 0,
-				link: '',
-				date: new Date(),
-				modified: new Date(),
-				format: 'standard',
-				slug: '',
-				guid: '',
-				excerpt: '',
-				menu_order: 0,
-				comment_status: 'open',
-				ping_status: 'open',
-				sticky: false,
-				date_tz: 'Etc/UTC',
-				modified_tz: 'Etc/UTC',
-				date_gmt: new Date(),
-				modified_gmt: new Date(),
-				meta: {
-					links: {}
-				},
-				terms: [],
-				source: '',
-				is_image: true,
-				attachment_meta: {},
-				image_meta: {}
+		defaults: {
+			ID: null,
+			title: '',
+			status: 'draft',
+			type: 'page',
+			author: new User(),
+			content: '',
+			parent: 0,
+			link: '',
+			date: new Date(),
+			modified: new Date(),
+			date_gmt: new Date(),
+			modified_gmt: new Date(),
+			date_tz: 'Etc/UTC',
+			modified_tz: 'Etc/UTC',
+			format: 'standard',
+			slug: '',
+			guid: '',
+			excerpt: '',
+			menu_order: 0,
+			comment_status: 'closed',
+			ping_status: 'open',
+			sticky: false,
+			password: '',
+			meta: {
+				links: {}
 			},
-
-			/**
-			 * @class Represent a media item
-			 * @augments Backbone.Model
-			 * @constructs
-			 */
-			initialize: function() {
-				// Todo: what of the parent model is a page?
-				this.parentModel = Post;
-			}
-		}, TimeStampedMixin, HierarchicalMixin )
-	);
-
-	/**
-	 * Backbone model for comments
-	 */
-	this.Comment = BaseModel.extend( _.extend(
-		/** @lends Comment.prototype */
-		{
-			idAttribute: 'ID',
-
-			defaults: {
-				ID: null,
-				post: null,
-				content: '',
-				status: 'hold',
-				type: '',
-				parent: 0,
-				author: new User(),
-				date: new Date(),
-				date_gmt: new Date(),
-				date_tz: 'Etc/UTC',
-				meta: {
-					links: {}
-				}
-			},
-
-			/**
-			 * Return URL for model
-			 *
-			 * @returns {string}
-			 */
-			url: function() {
-				var post_id = this.get( 'post' );
-				post_id = post_id || '';
-
-				var id = this.get( 'ID' );
-				id = id || '';
-
-				return WP_API_Settings.root + '/posts/' + post_id + '/comments/' + id;
-			}
-		}, TimeStampedMixin, HierarchicalMixin )
-	);
-
-	/**
-	 * Backbone model for single post types
-	 */
-	this.PostType = BaseModel.extend(
-		/** @lends PostType.prototype */
-		{
-			idAttribute: 'slug',
-
-			urlRoot: WP_API_Settings.root + '/posts/types',
-
-			defaults: {
-				slug: null,
-				name: '',
-				description: '',
-				labels: {},
-				queryable: false,
-				searchable: false,
-				hierarchical: false,
-				meta: {
-					links: {}
-				},
-				taxonomies: []
-			},
-
-			/**
-			 * Prevent model from being saved
-			 *
-			 * @returns {boolean}
-			 */
-			save: function () {
-				return false;
-			},
-
-			/**
-			 * Prevent model from being deleted
-			 *
-			 * @returns {boolean}
-			 */
-			'delete': function () {
-				return false;
-			}
+			featured_image: null,
+			terms: []
 		}
-	);
+	}, TimeStampedMixin, HierarchicalMixin )
+);
+module.exports.Page = Page;
 
-	/**
-	 * Backbone model for a post status
-	 */
-	this.PostStatus = BaseModel.extend(
-		/** @lends PostStatus.prototype */
-		{
-			idAttribute: 'slug',
+/**
+ * Backbone model for revisions
+ */
+var Revision = Post.extend(
+	/** @lends Revision.prototype */
+	{
+		/**
+		 * Return URL for model
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			var parent_id = this.get( 'parent' );
+			parent_id = parent_id || '';
 
-			urlRoot: WP_API_Settings.root + '/posts/statuses',
+			var id = this.get( 'ID' );
+			id = id || '';
 
-			defaults: {
-				slug: null,
-				name: '',
-				'public': true,
-				'protected': false,
-				'private': false,
-				queryable: true,
-				show_in_list: true,
-				meta: {
-					links: {}
-				}
-			},
+			return WP_API_Settings.root + '/posts/' + parent_id + '/revisions/' + id;
+		},
 
-			/**
-			 * Prevent model from being saved
-			 *
-			 * @returns {boolean}
-			 */
-			save: function() {
-				return false;
-			},
-
-			/**
-			 * Prevent model from being deleted
-			 *
-			 * @returns {boolean}
-			 */
-			'delete': function() {
-				return false;
-			}
+		/**
+		 * @class Represent a revision
+		 * @augments Backbone.Model
+		 * @constructs
+		 */
+		initialize: function() {
+			// Todo: what of the parent model is a page?
+			this.parentModel = this.Post;
 		}
-	);
+	}
+);
+module.exports.Revision = Revision;
 
-};
+/**
+ * Backbone model for media items
+ */
+var Media = BaseModel.extend( _.extend(
+	/** @lends Media.prototype */
+	{
+		idAttribute: 'ID',
 
-module.exports = WpApiModels;
+		urlRoot: WP_API_Settings.root + '/media',
+
+		defaults: {
+			ID: null,
+			title: '',
+			status: 'inherit',
+			type: 'attachment',
+			author: new User(),
+			content: '',
+			parent: 0,
+			link: '',
+			date: new Date(),
+			modified: new Date(),
+			format: 'standard',
+			slug: '',
+			guid: '',
+			excerpt: '',
+			menu_order: 0,
+			comment_status: 'open',
+			ping_status: 'open',
+			sticky: false,
+			date_tz: 'Etc/UTC',
+			modified_tz: 'Etc/UTC',
+			date_gmt: new Date(),
+			modified_gmt: new Date(),
+			meta: {
+				links: {}
+			},
+			terms: [],
+			source: '',
+			is_image: true,
+			attachment_meta: {},
+			image_meta: {}
+		},
+
+		/**
+		 * @class Represent a media item
+		 * @augments Backbone.Model
+		 * @constructs
+		 */
+		initialize: function() {
+			// Todo: what of the parent model is a page?
+			this.parentModel = this.Post;
+		}
+	}, TimeStampedMixin, HierarchicalMixin )
+);
+module.exports.Media = Media;
+
+/**
+ * Backbone model for comments
+ */
+var Comment = BaseModel.extend( _.extend(
+	/** @lends Comment.prototype */
+	{
+		idAttribute: 'ID',
+
+		defaults: {
+			ID: null,
+			post: null,
+			content: '',
+			status: 'hold',
+			type: '',
+			parent: 0,
+			author: new User(),
+			date: new Date(),
+			date_gmt: new Date(),
+			date_tz: 'Etc/UTC',
+			meta: {
+				links: {}
+			}
+		},
+
+		/**
+		 * Return URL for model
+		 *
+		 * @returns {string}
+		 */
+		url: function() {
+			var post_id = this.get( 'post' );
+			post_id = post_id || '';
+
+			var id = this.get( 'ID' );
+			id = id || '';
+
+			return WP_API_Settings.root + '/posts/' + post_id + '/comments/' + id;
+		}
+	}, TimeStampedMixin, HierarchicalMixin )
+);
+module.exports.Comment = Comment;
+
+/**
+ * Backbone model for single post types
+ */
+var PostType = BaseModel.extend(
+	/** @lends PostType.prototype */
+	{
+		idAttribute: 'slug',
+
+		urlRoot: WP_API_Settings.root + '/posts/types',
+
+		defaults: {
+			slug: null,
+			name: '',
+			description: '',
+			labels: {},
+			queryable: false,
+			searchable: false,
+			hierarchical: false,
+			meta: {
+				links: {}
+			},
+			taxonomies: []
+		},
+
+		/**
+		 * Prevent model from being saved
+		 *
+		 * @returns {boolean}
+		 */
+		save: function () {
+			return false;
+		},
+
+		/**
+		 * Prevent model from being deleted
+		 *
+		 * @returns {boolean}
+		 */
+		'delete': function () {
+			return false;
+		}
+	}
+);
+module.exports.PostType = PostType;
+
+/**
+ * Backbone model for a post status
+ */
+var PostStatus = BaseModel.extend(
+	/** @lends PostStatus.prototype */
+	{
+		idAttribute: 'slug',
+
+		urlRoot: WP_API_Settings.root + '/posts/statuses',
+
+		defaults: {
+			slug: null,
+			name: '',
+			'public': true,
+			'protected': false,
+			'private': false,
+			queryable: true,
+			show_in_list: true,
+			meta: {
+				links: {}
+			}
+		},
+
+		/**
+		 * Prevent model from being saved
+		 *
+		 * @returns {boolean}
+		 */
+		save: function() {
+			return false;
+		},
+
+		/**
+		 * Prevent model from being deleted
+		 *
+		 * @returns {boolean}
+		 */
+		'delete': function() {
+			return false;
+		}
+	}
+);
+module.exports.PostStatus = PostStatus;
