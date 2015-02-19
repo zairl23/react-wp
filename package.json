@@ -5,6 +5,7 @@
   "dependencies": {
     "backbone": "^1.1.2",
     "backbone-react-component": "^0.7.3",
+    "bootstrap": "^3.3.2",
     "react": "^0.12.2",
     "react-router": "~0.12.0",
     "reactify": "~1.0.0",
