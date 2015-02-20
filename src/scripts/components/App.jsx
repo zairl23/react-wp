@@ -5,8 +5,9 @@ var Backbone               = require('backbone');
 Backbone.$                 = $;
 var BackboneReactComponent = require('backbone-react-component');
 
-var Posts                  = require('../collections/WpApiCollections').Posts;
+var BlogHeader			   = require('./BlogHeader.jsx');
 var PostList               = require('./PostList.jsx');
+var PostEntry               = require('./PostEntry.jsx');
 
 // Renders the full application
 var App = React.createClass({
@@ -14,7 +15,24 @@ var App = React.createClass({
     mixins: [BackboneReactComponent],			 // [Reflux.connect(Store,"")],
     render: function() {
         return (
-            <PostList />
+        	<div id="reactwp">
+	        	<BlogHeader />
+
+	        	<div className="container">
+	        		<div className="row">
+	        			<div className="col-sm-8 col-sm-offset-2">
+	        				<PostEntry />
+	        			</div>
+	        		</div>
+
+
+	        		<div className="row">
+	        			<div className="col-sm-8 col-sm-offset-2">
+	            			<PostList />
+	            		</div>
+	            	</div>
+	            </div>
+	        </div>
         );
     }
 });
