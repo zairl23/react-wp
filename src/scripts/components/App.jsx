@@ -7,7 +7,8 @@ var BackboneReactComponent = require('backbone-react-component');
 
 var BlogHeader			   = require('./BlogHeader.jsx');
 var PostList               = require('./PostList.jsx');
-var PostEntry               = require('./PostEntry.jsx');
+var PostEntry              = require('./PostEntry.jsx');
+
 
 // Renders the full application
 var App = React.createClass({
