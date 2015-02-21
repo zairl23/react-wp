@@ -4,7 +4,6 @@
 
 * ReactJS
 * Reflux
-* Backbone
 
 ## Running
 
