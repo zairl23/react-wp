@@ -24,14 +24,14 @@ module.exports = {
 	      dest: dest + '/scripts',
 	      outputName: 'libs.js',
 	      // list of modules to make require-able externally
-	      require: ['underscore', 'react', 'react/addons', 'reflux', 'react-router', 'backbone', 'jquery', 'superagent'],
+	      require: ['underscore', 'react', 'react/addons', 'reflux', 'react-router', 'wordpress-rest-api'],
 	      loadMaps: false
 	    }, {
 	      entries: src + '/scripts/main.jsx',
 	      dest: dest + '/scripts',
 	      outputName: 'main.js',
 	      // list of externally available modules to exclude from the bundle
-	      external: ['underscore', 'react', 'react/addons', 'reflux', 'react-router', 'backbone', 'jquery', 'superagent'],
+	      external: ['underscore', 'react', 'react/addons', 'reflux', 'react-router', 'wordpress-rest-api'],
 	      loadMaps: true
 	    }]
   }
