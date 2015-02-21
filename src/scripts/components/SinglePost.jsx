@@ -8,9 +8,9 @@ var SinglePost =  React.createClass({
         return (
             <div className="panel panel-default">
                 <div className="panel-heading">
-                    <h3 className="panel-title">{}</h3>
+                    <h3 className="panel-title">{ this.props.post.title }</h3>
                 </div>
-                <div className="panel-body" dangerouslySetInnerHTML={{__html: ''}}>
+                <div className="panel-body" dangerouslySetInnerHTML={{__html: this.props.post.content }}>
                 </div>
             </div>
         );
