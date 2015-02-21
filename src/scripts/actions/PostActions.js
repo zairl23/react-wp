@@ -1,3 +1,4 @@
+/* jslint node: true */
 'use strict';
 var Reflux = require('reflux');
 
@@ -5,7 +6,8 @@ var Reflux = require('reflux');
 // The store is listening to all actions, and the components in turn are listening to the store.
 // Thus the flow is: User interaction -> component calls action -> store reacts and triggers -> components update
 
-var Actions = Reflux.createActions([
+var PostActions = Reflux.createActions([
+
 ]);
 
-module.exports = Actions;
+module.exports = PostActions;
