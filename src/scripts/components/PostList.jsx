@@ -1,19 +1,13 @@
-var _ = require('underscore');
-var React = require('react/addons');
+var _           = require('underscore');
+var React       = require('react/addons');
 var ReactRouter = require('react-router');
 
-var PostActions = require('../actions/PostActions.js');
-var SinglePost = require('./SinglePost.jsx');
 
+var SinglePost  = require('./SinglePost.jsx');
 
-// Renders the todo list as well as the toggle all button
-// Used in TodoApp
 var PostList = React.createClass({
     propTypes: {
         posts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    },
-    componentWillMount: function() {
-        PostActions.loadPosts();
     },
     createEntry: function(post) {
         return (

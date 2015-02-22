@@ -1,11 +1,11 @@
 /* jslint node: true */
+/* global WP_API_Settings */
 'use strict';
-var _ = require('underscore');
-var Reflux = require('reflux');
+var Reflux      = require('reflux');
 var PostActions = require('../actions/PostActions.js');
-var WP    = require( 'wordpress-rest-api' );
+var WP          = require( 'wordpress-rest-api' );
 
-var wp = new WP({endpoint: WP_API_Settings.root});
+var wp          = new WP({endpoint: WP_API_Settings.root});
 
 var PostStore = Reflux.createStore({
     listenables: [PostActions],

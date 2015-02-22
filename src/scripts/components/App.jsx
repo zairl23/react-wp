@@ -1,10 +1,11 @@
 'use strict';
-var React                  = require('react');
-var Reflux				   = require('reflux');
-var BlogHeader			   = require('./BlogHeader.jsx');
-var PostList               = require('./PostList.jsx');
-var PostEntry              = require('./PostEntry.jsx');
-var PostStore			   = require('../stores/PostStore.js');
+var React       = require('react');
+var Reflux      = require('reflux');
+var BlogHeader  = require('./BlogHeader.jsx');
+var PostList    = require('./PostList.jsx');
+var PostEntry   = require('./PostEntry.jsx');
+var PostStore   = require('../stores/PostStore.js');
+var PostActions = require('../actions/PostActions.js');
 
 // Renders the full application
 var App = React.createClass({
@@ -33,5 +34,7 @@ var App = React.createClass({
         );
     }
 });
+
+PostActions.loadPosts();
 
 module.exports = App;
