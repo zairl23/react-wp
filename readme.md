@@ -21,13 +21,10 @@ This project comes with a gulp task to compile less and JS files (using browseri
 
 **You will need to change (or remove) to the proxy definition for browser-sync in gulp/config.js**
 
-**To bundle JS and compile LESS:**
+To bundle JS and compile LESS:
 ```
 gulp build
 ```
-
-Need to add uglify/minification. 
-
 
 For watch & browser-sync:
 ```
