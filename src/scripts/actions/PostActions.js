@@ -3,7 +3,8 @@
 var Reflux = require('reflux');
 
 var PostActions = Reflux.createActions({
-	"loadPosts": {asyncResult: true}
+	"loadPosts": {asyncResult: true},
+	"addPost":   {asyncResult: true}
 });
 
 
