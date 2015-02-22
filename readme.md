@@ -35,7 +35,6 @@ gulp watch
 
 - [ ] Default gulp task
 - [ ] Uglify/minify in build task
-- [ ] 
 
 ## Credit
 
