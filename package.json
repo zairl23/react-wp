@@ -4,6 +4,7 @@
   "description": "ReactJS + Reflux TodoMVC example with a Gulp + Browserify build process.",
   "dependencies": {
     "bootstrap": "^3.3.2",
+    "bootswatch": "^3.3.2",
     "gulp-less": "^3.0.0",
     "jquery": "^2.1.3",
     "less": "^2.4.0",
