@@ -16,7 +16,15 @@ var PostList = React.createClass({
     },
     render: function() {            
         return (
-            <div>{ this.props.posts.map(this.createEntry) }</div>
+            <div role="tabpanel">
+                <ul className="nav nav-tabs" role="tablist">
+                  <li role="presentation" className="active"><a href="#">All</a></li>
+                  <li role="presentation"><a href="#">Filtered</a></li>
+                </ul>
+                <div className="tab-content">
+                    { this.props.posts.map(this.createEntry) }
+                </div>
+            </div>
         );
     }
 });

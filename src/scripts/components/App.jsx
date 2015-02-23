@@ -16,16 +16,16 @@ var App = React.createClass({
         	<div id="reactwp">
 	        	<BlogHeader />
 
-	        	<div className="container">
+	        	<div className="container-fluid">
 	        		<div className="row">
-	        			<div className="col-sm-8 col-sm-offset-2">
+	        			<div className="col-sm-7">
 	        				<PostEntry />
 	        			</div>
 	        		</div>
 
 
 	        		<div className="row">
-	        			<div className="col-sm-8 col-sm-offset-2">
+	        			<div className="col-sm-7">
 	            			<PostList posts={this.state.posts} />
 	            		</div>
 	            	</div>
