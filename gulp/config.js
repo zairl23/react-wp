@@ -9,6 +9,10 @@ module.exports = {
 	    	paths: []
 	    }
   	},
+  	fonts: {
+  		src: "./node_modules/font-awesome/fonts/*",
+  		dest: dest + '/fonts'
+   	},
 	browserSync: {
     	proxy: 'reactwp.dev',
     	snippetOptions: {
