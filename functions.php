@@ -25,4 +25,13 @@ function load_scripts() {
   	
 }
 
+function site_info(){
+    $site_infos = array(
+        "name" => get_bloginfo('name'),
+        "description" => get_bloginfo('description'),
+        "url" => get_bloginfo('url'),
+    );
+    return json_encode($site_infos, true);
+}
+
 add_action('wp_enqueue_scripts', 'load_scripts', 100);

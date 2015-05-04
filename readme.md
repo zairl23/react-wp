@@ -15,6 +15,8 @@ Install dependencies with npm.
 npm install
 ```
 
+npm install browser-sync --save-dev
+
 ## Building
 
 This project comes with a gulp task to compile less and JS files (using browserify), as well as a watch task to rebundle and update via browser-sync. There is no default task yet, I recommend just demo-ing with 'gulp watch'. 

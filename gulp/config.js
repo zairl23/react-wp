@@ -10,7 +10,7 @@ module.exports = {
 	    }
   	},
 	browserSync: {
-    	proxy: 'reactwp.dev',
+    	proxy: 'localhost:5555',
     	snippetOptions: {
       		whitelist: ['/wp-admin/admin-ajax.php'],
       		blacklist: ['/wp-admin/**']

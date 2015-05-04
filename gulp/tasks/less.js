@@ -9,7 +9,7 @@ var notify		 = require('gulp-notify');
 gulp.task('less', function () {
   return gulp.src(config.src)
     .pipe(sourcemaps.init())
-    .pipe(less(config.settings))
+    .pipe(less())
     .on('error', notify.onError({
         title: "LESS Compile Error",
         message: "<%= error.message %>"
